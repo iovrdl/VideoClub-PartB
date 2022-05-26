@@ -1,0 +1,32 @@
+﻿@model IEnumerable<VideoClub.Core.Entities.Customer>
+
+@{
+    ViewBag.Title = "Customers";
+}
+
+<h2>Customers</h2>
+
+<div class="panel-default">
+    <table class="table">
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Actions</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>
+                    <div>
+                        @Html.ActionLink("Rent a Film", "Rent", new { customerId = item.Id }, "") |
+                        @Html.ActionLink("Active Rentals", "ActiveRentals", new { customerId = item.Id }, "") |
+                        @Html.ActionLink("Details", "Details", new { customerId = item.Id }, "")
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

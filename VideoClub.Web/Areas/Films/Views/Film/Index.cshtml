@@ -1,0 +1,73 @@
+﻿@using VideoClub.Core.Enumeration
+@model VideoClub.Infrastructure.Models.PaginationModel<VideoClub.Core.Entities.Film>
+
+@{
+    ViewBag.Title = "Films";
+}
+
+<h2>Films</h2>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+
+<div class="panel-default">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <p>
+            Find by title: @Html.TextBox("Search")
+            <input type="submit" value="Search"/>
+        </p>
+        <p>
+            @Html.DropDownList("Genre",
+                EnumHelper.GetSelectList(typeof(Genre)),
+                "Filter by Genre",
+                new
+                {
+                    @class = "form-control",
+                    onchange = "this.form.submit()"
+                })
+        </p>
+    }
+
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Available Copies</th>
+            <th>Actions</th>
+        </tr>
+
+        @foreach (var item in Model.CurrentPageItems)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Copies.FindAll(c => c.IsAvailable).Count</td>
+
+                <td>
+                    <div>
+                        @if (item.Copies.FindAll(c => c.IsAvailable).Count != 0)
+                        {
+                            @Html.ActionLink("Rent", "Rent", new { filmId = item.Id }, "")
+                            @:|
+                        }
+                        @Html.ActionLink("Details", "Details", new { filmId = item.Id }, "")
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+
+    <br/>
+    <ul class="pagination">
+        @for (var i = 1; i <= Model.TotalPages(); i++)
+        {
+            <li class="@(i == Model.CurrentPage ? "page-item active" : "page-item")">
+                <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+            </li>
+        }
+    </ul>
+</div>

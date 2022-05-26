@@ -1,0 +1,56 @@
+﻿@model IEnumerable<VideoClub.Core.Entities.Rental>
+
+@{
+    ViewBag.Title = "Active Rentals";
+}
+
+<h2>Active Rentals</h2>
+
+<div class="panel-default">
+    <table class="table">
+        <tr>
+            <th>Film Title</th>
+            <th>Copy Id</th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Username</th>
+            }
+            <th>Rental Date</th>
+            <th>Return Date</th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Note</th>
+                <th>Actions</th>
+            }
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Film.Title</td>
+                <td>@item.CopyId</td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>@item.Customer.UserName</td>
+                }
+                <td>@item.RentalDate.ToString("dd-MM-yyyy")</td>
+                <td>@item.ReturnDate.ToString("dd-MM-yyyy")</td>
+                @if (User.IsInRole("Admin"))
+                {
+                    if (string.IsNullOrEmpty(item.Note))
+                    {
+                        <td>-</td>
+                    }
+                    else
+                    {
+                        <td>@item.Note</td>
+                    }
+                }
+                @if (item.IsActive && User.IsInRole("Admin"))
+                {
+                    <td>@Html.ActionLink("Return Film", "Return", new { rentalId = item.Id }, "")</td>
+                }
+            </tr>
+        }
+    </table>
+</div>
